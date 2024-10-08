@@ -1,0 +1,34 @@
+Command	Description	Example
+search	Basic command to search events.	index=main error
+where	Filters results based on conditions (similar to SQL WHERE).	| where status_code=200
+dedup	Removes duplicate results based on specified fields.	| dedup host
+rex	Extracts fields using regular expressions.	| rex field=_raw "(?<user_agent>Chrome|Firefox)"
+eval	Creates or modifies fields using calculations or logic.	| eval response_time = duration * 1000
+stats	Computes statistics (count, sum, avg) over a dataset.	| stats count by sourcetype
+timechart	Displays trends over time, often used in dashboards.	| timechart span=1h count
+chart	Similar to stats, used for creating charts from grouped data.	| chart avg(cpu_usage) by host
+top	Returns the most frequent values for a field.	| top user limit=5
+rare	Returns the least frequent values for a field.	| rare src_ip
+lookup	Enriches events with external data (from CSV or KV stores).	  | lookup geo_lookup ip AS src_ip OUTPUT city country
+join	Joins results from two searches based on common fields.	| join type=left host [ search index=logs ]
+append	Adds results from one search to another.	(index=index1 OR index=index2) | append [search index=index3]
+fillnull	Replaces null field values with a default value.	| fillnull value=0 status_code
+transaction	Groups events that share a common field to analyze them as a single event.	index=your_index | transaction startswith="login" endswith="logout" maxspan=1h
+datamodel	Searches or accesses data models.	| datamodel "Web_Application" search
+pivot	Visualizes data using Splunk’s pivot interface.	| pivot Web_Application count by status
+loadjob	Retrieves saved search results by referencing a previously completed search.	| loadjob savedsearch="my_search"
+mstats	Retrieves metrics data for real-time and historical data from metrics store.	| mstats sum(_value) WHERE index=metrics BY host
+metadata	Returns metadata information like hosts, sources, and sourcetypes.	| metadata type=hosts
+tstats	High-performance command for searching data models and index metadata.	| tstats count where index=your_index
+metasearch	Searches on index metadata, like host, source, or sourcetype.	| metasearch customer_contact.txt
+		| table _time host source sourcetype index
+fields	Limits the fields returned by a search.	| fields host, sourcetype
+table	Formats the output in a table view.	| table _time, host, status
+collect	Saves the results of a search into a summary index for later use.	| collect index=summary
+cluster	Groups similar events into clusters for pattern recognition.	| cluster t=0.9 showcount=t
+abstract	Summarizes events by selecting representative samples from clusters.	| abstract max=10
+anomalies	Identifies anomalous events in time series data.	| anomalies action=filter threshold=3.0
+streamstats	Calculate cumulative statistics	index=your_index | streamstats count as cumulative_count
+map  	Apply a search to each value of a field. 	| makeresults | eval field="value1,value2,value3" | map maxsearches=3 search="search index=your_index field=$field$"
+transpose	Swap rows and columns of results.	 index=your_index | stats count by sourcetype, host | transpose row _time column sourcetype
+bin 	Bin numerical values into ranges. 	index=your_index | bin _time span=1h
